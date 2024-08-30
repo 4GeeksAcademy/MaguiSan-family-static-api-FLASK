@@ -25,17 +25,6 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 # -------------------------------------Endpoints--------------------------------
-
-# EJEMPLO-----------------------------
-# @app.route('/members', methods=['GET'])
-# def handle_hello():
-#     # this is how you can use the Family datastructure by calling its methods
-#     members = jackson_family.get_all_members()
-#     response_body = {
-#         "family": members
-#     }
-#     return jsonify(response_body), 200
-
 # GET /members-------------
 # status_code 
 # 200 si se realizó con éxito
@@ -54,10 +43,9 @@ def get_members():
            return jsonify({'error': 'not found members'}), 404
 
     except Exception as e:
-        return jsonify({'error': 'Internal server error', 'message': str(e)})
+        return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
 
     return jsonify({'members': members}), 200
-    
     
 
 # GET /member/<int:member_id>----------------
@@ -74,8 +62,15 @@ def get_members():
 # Obtiene un solo miembro de la familia
 @app.route('/member/<int:member_id>', methods=['GET'])
 def get_a_member(member_id):
-    # print(member_id)
-    member = jackson_family.get_member(member_id)
+    try:
+        member = jackson_family.get_member(member_id)
+        # print(member_id)
+        if member == None:
+           return jsonify({'error': 'not found member'}), 404
+        
+    except Exception as e:
+        return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
+    
     return jsonify(member), 200
 
 # POST /member -----------------
@@ -93,7 +88,7 @@ def get_a_member(member_id):
 @app.route('/member', methods=['POST'])
 def add_new_member():
     request_body = request.json
-    # como sabe q tiene first_name, age, lucky_numbers :(
+    # como sabe q tiene first_name, age, lucky_numbers :(, podria agregar mas keys
     # porq la funcion le da id y last_name
     new_member = jackson_family.add_member(request_body)
     return jsonify(new_member), 200
@@ -105,11 +100,11 @@ def add_new_member():
 #     done: True
 # }
 # Elimina un miembro de la familia segun su id
+
 @app.route('/member/<int:member_id>', methods=['DELETE'])
 def delete_a_member(member_id):
     jackson_family.delete_member(member_id)
     return jsonify({'done': True}), 200
-
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':

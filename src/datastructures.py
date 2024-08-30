@@ -34,12 +34,7 @@ class FamilyStructure:
 	            "last_name": self.last_name
             }
         ]
-
-    # # read-only: Use this method to generate random members ID's when adding members into the list
-    # def _generateId(self):
-    #     return randint(0, 99999999)
-    
-    # Este método genera un 'id' único al agregar miembros a la lista (no debes modificar esta función)
+    # Este método genera un 'id' único al agregar miembros a la lista
     def _generate_id(self):
         generated_id = self._next_id
         self._next_id += 1
@@ -48,17 +43,20 @@ class FamilyStructure:
     def add_member(self, member):
         if 'id' not in member:
             member['id'] = self._generate_id()
-        
         member['last_name'] = self.last_name
         self._members.append(member)
+        return self._members
 
     def delete_member(self, id):
-        self._members.pop(id)
-        # que me deberia retornar?
-        # return self._members
+        # self._members.pop(id) No puedo usar esto porq me da el valor segun la posicion en el diccionario       
+        for member in self._members:
+            if member['id'] == id:
+                self._members.remove(member)
+                return member
+        return None
 
     def get_member(self, id):
-        # member = self._members[id] No puedo usar esto porq es segun la posicion en el diccionario
+        # member = self._members[id] No puedo usar esto porq me da el valor segun la posicion en el diccionario
         for member in self._members:
             if member['id'] ==id:
                 return member

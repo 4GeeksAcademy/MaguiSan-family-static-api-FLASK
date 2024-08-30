@@ -53,12 +53,12 @@ class FamilyStructure:
             if member['id'] == id:
                 self._members.remove(member)
                 return member
-        return self._members
+        return None
 
     def get_member(self, id):
         # member = self._members[id] No puedo usar esto porq me da el valor segun la posicion en el diccionario
         for member in self._members:
-            if member['id'] ==id:
+            if member['id'] == id:
                 return member
         return None
 

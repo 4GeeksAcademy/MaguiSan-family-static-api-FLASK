@@ -40,8 +40,7 @@ def get_members():
         members = jackson_family.get_all_members()
         if members == []:
            return jsonify({'error': 'Not found members'}), 404
-        
-        return jsonify({'message':'ok', 'members': members}), 200
+        return jsonify(members), 200
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
 
@@ -64,7 +63,6 @@ def get_a_member(member_id):
         # print(member_id)
         if member == None:
            return jsonify({'error': 'Not found member'}), 404
-        
         return jsonify(member), 200
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
@@ -89,8 +87,8 @@ def add_new_member():
         request_body = request.get_json()
         # como sabe q tiene first_name, age, lucky_numbers :(, podria agregar mas keys
         # porq la funcion le da id y last_name
-        new_member = jackson_family.add_member(request_body)
-        return jsonify(new_member), 200
+        new_list_members = jackson_family.add_member(request_body)
+        return jsonify(new_list_members), 200
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
 
@@ -105,9 +103,10 @@ def add_new_member():
 @app.route('/member/<int:member_id>', methods=['DELETE'])
 def delete_a_member(member_id):
     try:
-        member_deleted = jackson_family.delete_member(member_id)
-        if member_deleted:
-            return jsonify({'done': True}), 200
+        deleted_member = jackson_family.delete_member(member_id)
+        if deleted_member == None:
+           return jsonify({'error': 'Not found member'}), 404
+        return jsonify({'done': True}), 200
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
 

@@ -47,8 +47,7 @@ class FamilyStructure:
         self._members.append(member)
         return self._members
 
-    def delete_member(self, id):
-        # self._members.pop(id) No puedo usar esto porq me da el valor segun la posicion en el diccionario       
+    def delete_member(self, id):      
         for member in self._members:
             if member['id'] == id:
                 self._members.remove(member)
@@ -56,7 +55,6 @@ class FamilyStructure:
         return None
 
     def get_member(self, id):
-        # member = self._members[id] No puedo usar esto porq me da el valor segun la posicion en el diccionario
         for member in self._members:
             if member['id'] == id:
                 return member

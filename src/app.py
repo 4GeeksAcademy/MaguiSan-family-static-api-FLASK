@@ -24,15 +24,7 @@ def handle_invalid_usage(error):
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)
-# -------------------------------------Endpoints--------------------------------
-# GET /members-------------
-# status_code 
-# 200 si se realizó con éxito
-# 400 si hubo un error por parte del cliente
-# 500 si el servidor encuentra un error
-# RESPONSE BODY (content-type: application/json):
-# []  <!--- Lista de miembros de la familia -->
-
+# ----------------------------------------------------Endpoints-----------------------------------------------------
 # Obtiene todos los miembros de la familia
 @app.route('/members', methods=['GET'])
 def get_members():
@@ -43,17 +35,6 @@ def get_members():
         return jsonify(members), 200
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
-
-# GET /member/<int:member_id>----------------
-# RESPONSE (content_type: application/json):
-# status_code 200 si se realizó con éxito, 400 si hubo un error por parte del cliente, 500 si el servidor encuentra un error
-# body:  <!--- el objeto json del miembro de la familia --> 
-# {
-#     "id": Int,
-#     "first_name": String,
-#     "age": Int,
-#     "lucky_numbers": List
-# }
 
 # Obtiene un solo miembro de la familia
 @app.route('/member/<int:member_id>', methods=['GET'])
@@ -67,17 +48,6 @@ def get_a_member(member_id):
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
 
-# POST /member -----------------
-# REQUEST BODY (content_type: application/json):
-# {
-#     id: Int,
-#     first_name: String,
-#     age: Int,
-#     lucky_numbers: []
-# }
-# RESPONSE (content_type: application/json):
-# status_code 200 si se realizó con éxito, 400 si hubo un error por parte del cliente, 500 si el servidor encuentra un error
-
 # Añade un nuevo miembro a la estructura de datos de la familia.
 @app.route('/member', methods=['POST'])
 def add_new_member():
@@ -85,21 +55,12 @@ def add_new_member():
         return jsonify({'error': 'Bad request', 'message': 'The request format is invalid. Please check the data you have sent.'}), 400
     try:
         request_body = request.get_json()
-        # como sabe q tiene first_name, age, lucky_numbers :(, podria agregar mas keys
-        # porq la funcion le da id y last_name
         new_list_members = jackson_family.add_member(request_body)
         return jsonify(new_list_members), 200
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
 
-# DELETE /member/<int:member_id> -------------
-# RESPONSE (content_type: application/json):
-# status_code 200 si se realizó con éxito, 400 si hubo un error por parte del cliente, 500 si el servidor encuentra un error
-# body: {
-#     done: True
-# }
 # Elimina un miembro de la familia segun su id
-
 @app.route('/member/<int:member_id>', methods=['DELETE'])
 def delete_a_member(member_id):
     try:

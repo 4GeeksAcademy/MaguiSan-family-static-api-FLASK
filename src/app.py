@@ -38,15 +38,12 @@ def sitemap():
 def get_members():
     try:
         members = jackson_family.get_all_members()
-        
         if members == []:
-           return jsonify({'error': 'not found members'}), 404
-
+           return jsonify({'error': 'Not found members'}), 404
+        
+        return jsonify({'message':'ok', 'members': members}), 200
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
-
-    return jsonify({'members': members}), 200
-    
 
 # GET /member/<int:member_id>----------------
 # RESPONSE (content_type: application/json):
@@ -66,12 +63,11 @@ def get_a_member(member_id):
         member = jackson_family.get_member(member_id)
         # print(member_id)
         if member == None:
-           return jsonify({'error': 'not found member'}), 404
+           return jsonify({'error': 'Not found member'}), 404
         
+        return jsonify(member), 200
     except Exception as e:
         return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
-    
-    return jsonify(member), 200
 
 # POST /member -----------------
 # REQUEST BODY (content_type: application/json):
@@ -87,11 +83,16 @@ def get_a_member(member_id):
 # Añade un nuevo miembro a la estructura de datos de la familia.
 @app.route('/member', methods=['POST'])
 def add_new_member():
-    request_body = request.json
-    # como sabe q tiene first_name, age, lucky_numbers :(, podria agregar mas keys
-    # porq la funcion le da id y last_name
-    new_member = jackson_family.add_member(request_body)
-    return jsonify(new_member), 200
+    if request.content_type != 'application/json':
+        return jsonify({'error': 'Bad request', 'message': 'The request format is invalid. Please check the data you have sent.'}), 400
+    try:
+        request_body = request.get_json()
+        # como sabe q tiene first_name, age, lucky_numbers :(, podria agregar mas keys
+        # porq la funcion le da id y last_name
+        new_member = jackson_family.add_member(request_body)
+        return jsonify(new_member), 200
+    except Exception as e:
+        return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
 
 # DELETE /member/<int:member_id> -------------
 # RESPONSE (content_type: application/json):
@@ -103,8 +104,12 @@ def add_new_member():
 
 @app.route('/member/<int:member_id>', methods=['DELETE'])
 def delete_a_member(member_id):
-    jackson_family.delete_member(member_id)
-    return jsonify({'done': True}), 200
+    try:
+        member_deleted = jackson_family.delete_member(member_id)
+        if member_deleted:
+            return jsonify({'done': True}), 200
+    except Exception as e:
+        return jsonify({'error': 'Internal server error', 'message': str(e)}), 500
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
